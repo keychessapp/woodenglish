@@ -21,16 +21,16 @@ nav .on{color:var(--ac);background:var(--c2)}
 .chip{border:0;background:var(--c2);color:var(--tx);border-radius:20px;padding:8px 14px;font:inherit;font-size:14px}
 .row{background:var(--c);border-radius:14px;border-left:3px solid var(--ac);padding:8px 10px;margin:6px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center}.row.b{border-left-color:#a78bfa}
 .sp{width:24px;height:24px;border-radius:50%;background:var(--c2);display:grid;place-items:center;font-size:12px;color:var(--mu);flex:none}
-.row p{margin:0;flex:1;font-size:clamp(13px,2vh,15px);line-height:1.3;min-width:40%}.ic{display:flex;gap:6px;flex:none}.rv .ic{flex-basis:100%;justify-content:flex-end}
-.ib{width:36px;height:36px;border-radius:50%;border:0;background:var(--c2);color:var(--tx);font-size:15px;display:grid;place-items:center}
+.row p{margin:0;flex:1;font-size:clamp(15px,2.5vh,19px);line-height:1.3;min-width:40%}.ic{display:flex;gap:6px;flex:none}.rv .ic{flex-basis:100%;justify-content:flex-end}
+.ib{width:38px;height:38px;border-radius:50%;border:0;background:var(--c2);color:var(--tx);font-size:15px;display:grid;place-items:center}
 .rc{border:2px solid var(--rd);background:transparent;position:relative}.rc::after{content:"";width:14px;height:14px;border-radius:50%;background:var(--rd)}
 .rc.on{background:var(--rd)}.rc.on::after{background:#fff;border-radius:3px;width:12px;height:12px}.rc.on{animation:p 1s infinite}
 @keyframes p{50%{box-shadow:0 0 0 8px #ff6b7a33}}
 .dt{width:32px;height:32px;border-radius:50%;border:1px solid var(--mu);background:none;color:var(--mu);font-size:12px}
 .dt.f{background:var(--ac);border-color:var(--ac);color:#08211e}
-.li{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:var(--c);color:var(--tx);font:inherit;padding:9px 14px;border-radius:14px;margin:5px 0}.gr{display:grid;grid-template-columns:1fr 1fr;gap:8px}.gr .li{margin:0;font-size:13px;flex-direction:column;align-items:flex-start;gap:2px}
+.li{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:var(--c);color:var(--tx);font:inherit;padding:9px 14px;border-radius:14px;margin:5px 0}.gr{display:grid;grid-template-columns:1fr 1fr;gap:8px}.gr .li{margin:0;font-size:14px;flex-direction:column;align-items:flex-start;gap:2px}
 .li span{flex:1}.li small{color:var(--mu)}
-.td{padding:0 14px 6px;color:var(--mu);font-size:13px}.td b{color:var(--ac)}.md{position:fixed;inset:0;background:#000a;display:grid;place-items:center;padding:20px;z-index:9}.md .card{width:100%}
+.td{padding:0 14px 6px;color:var(--mu);font-size:14px}.td b{color:var(--ac)}.md{position:fixed;inset:0;background:#000a;display:grid;place-items:center;padding:20px;z-index:9}.md .card{width:100%}.cv{display:flex;flex-direction:column}.cv .row{flex:1 1 auto;margin:5px 0}
 table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:9px 4px;text-align:left;border-bottom:1px solid var(--c2)}th{color:var(--mu);font-weight:500}
 .pn .btn{margin:0;flex:1;padding:11px}.pn .c{align-self:center;color:var(--mu);font-size:13px;min-width:54px;text-align:center}
 </style></head><body><div id="app"></div><audio id="au" preload="metadata" src="merged_audio.mp3"></audio>
@@ -79,12 +79,12 @@ function conv(){const c=D.c[V.ci],i=Math.max(cur(),0),rv=V.m=='rev';
   else ic+=`<button class="ib rc ${rec&&rec.id==id?'on':''}" data-a=rec data-id=${id}></button>`+(has(id,i+1)?`<button class=ib data-a=pl data-id=${id} data-k=${i+1}>▶</button>`:'');
   return`<div class="row ${p[1]=='B'?'b':''} ${rv?'rv':''}"><p>${esc(p[2])}</p><div class=ic>${ic}</div></div>`}).join('')}
 function stats(){const lab={done:'Done',missed:'Missed'};
- return`<div class=card><table><tr><th>Cycle<th>Status<th>Days<th>Recorded</tr>`+st.cy.map((c,i)=>`<tr><td>${i+1}<td>${lab[c.r]||(c.s?'Active':'Pending')}<td>${c.s?Math.max(1,Math.ceil(((c.e||Date.now())-c.s)/DAY))+'/'+CD[i]:CD[i]}<td>${cnt[i]}</tr>`).join('')+`</table></div><button class="btn danger" data-a=reset>Erase all recordings and reset</button><p class=td>version 5</p>`}
+ return`<div class=card><table><tr><th>Cycle<th>Status<th>Days<th>Recorded</tr>`+st.cy.map((c,i)=>`<tr><td>${i+1}<td>${lab[c.r]||(c.s?'Active':'Pending')}<td>${c.s?Math.max(1,Math.ceil(((c.e||Date.now())-c.s)/DAY))+'/'+CD[i]:CD[i]}<td>${cnt[i]}</tr>`).join('')+`</table></div><button class="btn danger" data-a=reset>Erase all recordings and reset</button><p class=td>version 6</p>`}
 function draw(){sync();const t=V.t,cv=t=='conv';let hd,body;
  if(cv){const c=D.c[V.ci];hd=`<button class=ib data-a=back>←</button><h1>${esc(c.n)}</h1><button class=chip data-a=mode>${V.m=='rev'?'Record':'Review'}</button>`;body=conv()}
  else{hd=(t=='pack'?'<button class=ib data-a=back>←</button>':'')+`<h1>${{home:'Speak 1000',packs:'Packs',pack:esc(D.k[V.p]||''),stats:'Stats'}[t]}</h1>`;body={home,packs,pack,stats}[t]()}
  const l=inScope(),j=l.indexOf(V.ci);
- $('#app').innerHTML=`<header>${hd}</header>${cv?strip():''}<main>${body}</main>`+(cv?`<div class=pn><button class="btn ghost" data-a=prev>Back</button><span class=c>${j+1} / ${l.length}</span><button class=btn data-a=next>Next</button></div>`
+ $('#app').innerHTML=`<header>${hd}</header>${cv?strip():''}<main class="${cv?'cv':''}">${body}</main>`+(cv?`<div class=pn><button class="btn ghost" data-a=prev>Back</button><span class=c>${j+1} / ${l.length}</span><button class=btn data-a=next>Next</button></div>`
   :`<nav>${[['home','Home'],['packs','Packs'],['stats','Stats']].map(([v,n])=>`<button class="${v==t||(v=='packs'&&t=='pack')?'on':''}" data-v=${v}>${n}</button>`).join('')}</nav>`)}
 document.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
  if(d.v){await stopRec();stopAll();V={t:d.v};return draw()}
