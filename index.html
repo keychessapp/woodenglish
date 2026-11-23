@@ -1,6 +1,6 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0f1420"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><title>Speak 1000</title>
+<meta name="theme-color" content="#0f1420"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><title>Wood English</title>
 <style>
 :root{--bg:#0f1420;--c:#171e2e;--c2:#222b3f;--tx:#e8ecf4;--mu:#8793ab;--ac:#5fd0c5;--rd:#ff6b7a}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -30,7 +30,7 @@ nav .on{color:var(--ac);background:var(--c2)}
 .dt.f{background:var(--ac);border-color:var(--ac);color:#08211e}
 .li{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:var(--c);color:var(--tx);font:inherit;padding:9px 14px;border-radius:14px;margin:5px 0}.gr{display:grid;grid-template-columns:1fr 1fr;gap:8px}.gr .li{margin:0;font-size:14px;flex-direction:column;align-items:flex-start;gap:2px}
 .li span{flex:1}.li small{color:var(--mu)}
-.td{padding:0 14px 6px;color:var(--mu);font-size:14px}.td b{color:var(--ac)}.md{position:fixed;inset:0;background:#000a;display:grid;place-items:center;padding:20px;z-index:9}.md .card{width:100%}.cv{display:flex;flex-direction:column}.cv .row{flex:1 1 auto;margin:5px 0}
+.cap{flex:none;display:flex;gap:10px;align-items:center;background:var(--c);border-radius:14px;padding:8px 10px;margin:6px 0}.pgw{flex:1}.pgt{font-size:14px;color:var(--mu);margin-bottom:6px}.pgb{height:6px;background:var(--c2);border-radius:6px;overflow:hidden}.pgb i{display:block;height:100%;width:0;background:var(--ac)}.td{padding:0 14px 6px;color:var(--mu);font-size:14px}.td b{color:var(--ac)}.md{position:fixed;inset:0;background:#000a;display:grid;place-items:center;padding:20px;z-index:9}.md .card{width:100%}.cv{display:flex;flex-direction:column}.cv .row{flex:1 1 auto;margin:5px 0}
 table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:9px 4px;text-align:left;border-bottom:1px solid var(--c2)}th{color:var(--mu);font-weight:500}
 .pn .btn{margin:0;flex:1;padding:11px}.pn .c{align-self:center;color:var(--mu);font-size:13px;min-width:54px;text-align:center}
 </style></head><body><div id="app"></div><audio id="au" preload="metadata" src="merged_audio.mp3"></audio>
@@ -45,10 +45,12 @@ const idb=()=>new Promise((ok,no)=>{const r=indexedDB.open('speak1000',1);r.onup
 const tx=(m,f)=>new Promise((ok,no)=>{const t=db.transaction('r',m),q=f(t.objectStore('r'));t.oncomplete=()=>ok(q&&q.result);t.onerror=()=>no(t.error)});
 function sync(){cnt=CD.map(()=>0);keys.forEach(k=>cnt[k.split(':')[1]-1]++);
  st.cy.forEach((c,i)=>{if(c.s&&!c.r){if(cnt[i]>=1000){c.r='done';c.e=Date.now()}else if(Date.now()>c.s+CD[i]*DAY){c.r='missed';c.e=c.s+CD[i]*DAY}}});const j=cur();if(j>=0&&st.cy[j].s){const k=new Date().toDateString()+'|'+j;if(!st.b||st.b.k!==k){const dl=Math.max(1,Math.ceil((st.cy[j].s+CD[j]*DAY-Date.now())/DAY));st.b={k,n:cnt[j],t:Math.ceil((1000-cnt[j])/dl)}}}save()}
-function stopAll(){au.pause();clearInterval(mt);if(own){own.pause();own=null}}
-function model(id){stopAll();const p=P[id];if(p[3]==null)return;
- const go=()=>{au.currentTime=p[3];au.play().catch(e=>alert('Audio problem: '+e.message));mt=setInterval(()=>{if(au.currentTime>=p[4]){au.pause();clearInterval(mt)}},25)};
+function stopAll(){au.pause();clearInterval(mt);cr=null;tick();if(own){own.pause();own=null}}
+let cr=null;
+function tick(){const b=$('#pg'),pb=$('#pp');if(b)b.style.width=cr?Math.min(100,Math.max(0,(au.currentTime-cr[0])/(cr[1]-cr[0])*100))+'%':'0';if(pb)pb.textContent=cr&&!au.paused?'⏸':'▶'}
+function playR(s,e){stopAll();cr=[s,e];const go=()=>{au.currentTime=s;au.play().catch(x=>alert('Audio problem: '+x.message));mt=setInterval(()=>{if(au.currentTime>=e){au.pause();clearInterval(mt);cr=null}tick()},100)};
  au.readyState<1?(au.addEventListener('loadedmetadata',go,{once:true}),au.load()):go()}
+function playBar(c){return c.h.some(p=>p[3]!=null)?`<div class=cap><button class=ib data-a=pc id=pp>${cr&&!au.paused?'⏸':'▶'}</button><div class=pgw><div class=pgt>Listen to the conversation</div><div class=pgb><i id=pg></i></div></div></div>`:''}
 async function playRec(id,k){stopAll();const r=await tx('readonly',o=>o.get(id+':'+k));if(r){own=new Audio(URL.createObjectURL(r.b));own.play()}}
 function ensure(){const i=cur();if(i<0)return false;if(!st.cy[i].s){if(!confirm(`Start cycle ${i+1}? You will have ${CD[i]} day(s) to record all 1000 sentences.`))return false;st.cy[i].s=Date.now();save()}return true}
 function stopRec(){return new Promise(ok=>{const x=rec;if(!x)return ok();rec=null;x.mr.onstop=async()=>{x.s.getTracks().forEach(t=>t.stop());const b=new Blob(x.ch,{type:x.mr.mimeType});
@@ -74,15 +76,15 @@ function packs(){const k=Math.max(cur(),0)+1;return D.k.map((n,p)=>{const hs=D.c
 function pack(){const k=Math.max(cur(),0)+1,l=D.c.map((c,i)=>i).filter(i=>D.c[i].p==V.p);
  return`<button class=btn data-a=gop data-p=${V.p}>Continue this pack</button>`+'<div class=gr>'+l.map(i=>`<button class=li data-a=conv data-i=${i}><span>${esc(D.c[i].n)}</span><small>${D.c[i].h.filter(h=>has(h[0],k)).length}/${D.c[i].h.length}</small></button>`).join('')+'</div>'}
 function conv(){const c=D.c[V.ci],i=Math.max(cur(),0),rv=V.m=='rev';
- return c.h.map(p=>{const id=p[0];let ic=p[3]!=null?`<button class=ib data-a=mod data-id=${id}>🔊</button>`:'';
+ return playBar(c)+c.h.map(p=>{const id=p[0];let ic='';
   if(rv)ic+=CD.map((_,k)=>`<button class="dt ${has(id,k+1)?'f':''}" data-a=pl data-id=${id} data-k=${k+1}>${k+1}</button>`).join('');
   else ic+=`<button class="ib rc ${rec&&rec.id==id?'on':''}" data-a=rec data-id=${id}></button>`+(has(id,i+1)?`<button class=ib data-a=pl data-id=${id} data-k=${i+1}>▶</button>`:'');
   return`<div class="row ${p[1]=='B'?'b':''} ${rv?'rv':''}"><p>${esc(p[2])}</p><div class=ic>${ic}</div></div>`}).join('')}
 function stats(){const lab={done:'Done',missed:'Missed'};
- return`<div class=card><table><tr><th>Cycle<th>Status<th>Days<th>Recorded</tr>`+st.cy.map((c,i)=>`<tr><td>${i+1}<td>${lab[c.r]||(c.s?'Active':'Pending')}<td>${c.s?Math.max(1,Math.ceil(((c.e||Date.now())-c.s)/DAY))+'/'+CD[i]:CD[i]}<td>${cnt[i]}</tr>`).join('')+`</table></div><button class="btn danger" data-a=reset>Erase all recordings and reset</button><p class=td>version 6</p>`}
+ return`<div class=card><table><tr><th>Cycle<th>Status<th>Days<th>Recorded</tr>`+st.cy.map((c,i)=>`<tr><td>${i+1}<td>${lab[c.r]||(c.s?'Active':'Pending')}<td>${c.s?Math.max(1,Math.ceil(((c.e||Date.now())-c.s)/DAY))+'/'+CD[i]:CD[i]}<td>${cnt[i]}</tr>`).join('')+`</table></div><button class="btn danger" data-a=reset>Erase all recordings and reset</button><p class=td>version 7</p>`}
 function draw(){sync();const t=V.t,cv=t=='conv';let hd,body;
  if(cv){const c=D.c[V.ci];hd=`<button class=ib data-a=back>←</button><h1>${esc(c.n)}</h1><button class=chip data-a=mode>${V.m=='rev'?'Record':'Review'}</button>`;body=conv()}
- else{hd=(t=='pack'?'<button class=ib data-a=back>←</button>':'')+`<h1>${{home:'Speak 1000',packs:'Packs',pack:esc(D.k[V.p]||''),stats:'Stats'}[t]}</h1>`;body={home,packs,pack,stats}[t]()}
+ else{hd=(t=='pack'?'<button class=ib data-a=back>←</button>':'')+`<h1>${{home:'Wood English',packs:'Packs',pack:esc(D.k[V.p]||''),stats:'Stats'}[t]}</h1>`;body={home,packs,pack,stats}[t]()}
  const l=inScope(),j=l.indexOf(V.ci);
  $('#app').innerHTML=`<header>${hd}</header>${cv?strip():''}<main class="${cv?'cv':''}">${body}</main>`+(cv?`<div class=pn><button class="btn ghost" data-a=prev>Back</button><span class=c>${j+1} / ${l.length}</span><button class=btn data-a=next>Next</button></div>`
   :`<nav>${[['home','Home'],['packs','Packs'],['stats','Stats']].map(([v,n])=>`<button class="${v==t||(v=='packs'&&t=='pack')?'on':''}" data-v=${v}>${n}</button>`).join('')}</nav>`)}
@@ -93,7 +95,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest('button');i
  case'pack':V={t:'pack',p:+d.p};draw();break;case'conv':V={t:'conv',ci:+d.i,sc:V.p,m:'rec'};draw();break;
  case'back':await stopRec();stopAll();V=V.sc==null?{t:'home'}:{t:'pack',p:V.sc};draw();break;
  case'mode':await stopRec();stopAll();V.m=V.m=='rev'?'rec':'rev';draw();break;
- case'prev':nav(-1);break;case'next':nav(1);break;case'mod':model(+d.id);break;case'rec':toggleRec(+d.id);break;case'pl':playRec(+d.id,+d.k);break;
+ case'pc':{const c=D.c[V.ci],a=c.h.filter(p=>p[3]!=null);if(cr&&!au.paused)stopAll();else if(a.length)playR(Math.max(0,a[0][3]-.25),a[a.length-1][4]+.5);draw();break}case'prev':nav(-1);break;case'next':nav(1);break;case'mod':model(+d.id);break;case'rec':toggleRec(+d.id);break;case'pl':playRec(+d.id,+d.k);break;
  case'reset':reset();break;case'rz':reset2();break;case'rzn':$('#rz').remove();break;case'inst':inst.prompt();inst=null;draw();break}});
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();inst=e;if(V.t=='home')draw()});
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
